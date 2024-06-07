@@ -1,5 +1,3 @@
-![image](https://github.com/guaraujoc/Aplicativo-meu-financeiro/assets/130992375/31473175-86e5-47e5-8f7c-319e71753435)# Gerenciamento de finanças
-
 ## Descrição
 
 Atualmente, de acordo com o Instituto Brasileiro de Geografia e Estatísticas (IBGE), 70% das famílias brasileiras encontram-se endividadas, afetando o seu Score e oferta de crédito.
