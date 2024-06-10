@@ -14,7 +14,7 @@ export default function Index() {
 			<View style={styles.inputs}>
 				<Input label="E-mail" placeholder="Insira seu e-mail" />
 
-				<Input label="Senha" placeholder="Crie uma senha" />
+				<Input label="Senha" placeholder="Insira sua senha" />
 			</View>
 
 			<Button text="Entrar" onClick={() => router.navigate("/home")} />
