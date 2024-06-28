@@ -15,7 +15,7 @@ export default function Index() {
 					<CurrencyInput label="Valor total" />
 				</View>
 
-				<Button text="Salvar" onClick={() => {}} />
+				<Button text="Salvar" onPress={() => {}} />
 			</View>
 		</View>
 	);
