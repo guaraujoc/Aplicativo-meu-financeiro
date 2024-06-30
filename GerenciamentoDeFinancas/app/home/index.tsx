@@ -98,7 +98,7 @@ export default function Index() {
 				/>
 				<MenuButton
 					title="Adicionar compra"
-					href="/AddPurchase"
+					href="/NewTransaction"
 					iconName="cart-outline"
 					iconLibrary="Ionicons"
 				/>

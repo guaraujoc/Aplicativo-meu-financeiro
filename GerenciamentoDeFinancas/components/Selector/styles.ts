@@ -2,10 +2,8 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     typeButtonText: {
-		color: "#94A3B8",
         fontFamily: "Inter_400Regular",
 		fontSize: 16,
-        
     },
     saveButton: {
         backgroundColor: '#6C63FF',
@@ -50,7 +48,6 @@ export const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#94A3B8",
 		borderRadius: 8,
-        color: "#94A3B8",
         fontFamily: "Inter_400Regular",
 		fontSize: 16,
     },

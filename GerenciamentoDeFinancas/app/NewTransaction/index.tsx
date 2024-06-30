@@ -10,6 +10,8 @@ import { styles } from "./styles";
 import GoBack from "@/components/GoBack";
 import { Input } from "@/components/Input";
 import Selector from '@/components/Selector';
+import InpurDate from '@/components/InputDate';
+
 
 export default function TransactionScreen() {
     const [title, setTitle] = useState("");
@@ -56,7 +58,7 @@ export default function TransactionScreen() {
                     errorMessage={""}
                     maskType="money"
                 />
-
+                <InpurDate />
                 <Text style={[styles.typeButtonText]} >Tipo</Text>
                 <View style={styles.typeContainer}>
                     <TouchableOpacity 
