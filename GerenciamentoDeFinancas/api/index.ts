@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.0.21:3000";
+const BASE_URL = "http://192.168.15.3:3000";
 
 export const SIGN_IN = `${BASE_URL}/auth`;
 

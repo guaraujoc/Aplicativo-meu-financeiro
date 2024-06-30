@@ -6,6 +6,7 @@ import {
 	Image,
 	TouchableOpacity,
 	Alert,
+	ScrollView
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -35,7 +36,7 @@ export default function Index() {
 	};
 
 	return (
-		<View style={styles.container}>
+        <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.container}>
 			<View style={styles.topBar}>
 				<TouchableOpacity onPress={() => Alert.alert("Menu")}>
 					<Icon name="menu" size={30} color="#ffffff" />
@@ -139,16 +140,18 @@ export default function Index() {
 				/>
 			</View>
 			<Text style={styles.groupTitle}>Trocar grupo</Text>
-		</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		backgroundColor: "#1D212A",
-	},
+    scrollContainer: {
+        flex: 1,
+        backgroundColor: "#1D212A",
+    },
+    container: {
+        flexGrow: 1,
+    },
 	topBar: {
 		width: "100%",
 		flexDirection: "row",
