@@ -12,7 +12,7 @@ import Button from "@/components/Button";
 import { useGlobalContext } from "@/store";
 
 export default function Index() {
-	const { user, saveUser } = useGlobalContext();
+	const { user } = useGlobalContext();
 
 	const {
 		register,
@@ -57,7 +57,6 @@ export default function Index() {
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postUserData,
 		onSuccess: (data) => {
-			saveUser(data);
 			return router.navigate("/home");
 		},
 	});
