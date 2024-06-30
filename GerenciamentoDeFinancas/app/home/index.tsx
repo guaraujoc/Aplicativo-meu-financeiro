@@ -5,7 +5,7 @@ import {
 	Image,
 	TouchableOpacity,
 	Alert,
-	ScrollView
+	ScrollView,
 } from "react-native";
 import { styles } from "./styles";
 import { launchImageLibrary } from "react-native-image-picker";
@@ -39,7 +39,10 @@ export default function Index() {
 	};
 
 	return (
-        <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.container}>
+		<ScrollView
+			style={styles.scrollContainer}
+			contentContainerStyle={styles.container}
+		>
 			<View style={styles.topBar}>
 				<TouchableOpacity onPress={() => Alert.alert("Menu")}>
 					<Icon name="menu" size={30} color="#ffffff" />

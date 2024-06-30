@@ -1,40 +1,74 @@
-import React from "react";
-import {
-	Text,
-	TextInput,
-	View,
-	TouchableOpacity,
-	SafeAreaView,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React, { useEffect } from "react";
+import { SafeAreaView, View } from "react-native";
+import { useMutation } from "@tanstack/react-query";
 import { styles } from "./styles";
+import Header from "@/components/Header";
+import { Input } from "@/components/Input";
+import Button from "@/components/Button";
+import { FormFields, formValidationSchema } from "./types";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useGlobalContext } from "@/store";
+import { MEMBERS } from "@/api";
+import { router } from "expo-router";
 
 export default function Index() {
+	const { token } = useGlobalContext();
+
+	const {
+		register,
+		setValue,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<FormFields>({
+		resolver: yupResolver(formValidationSchema),
+	});
+
+	useEffect(() => {
+		register("email");
+	}, [register]);
+
+	const postNewMemberData = async (email: string) => {
+		const res = await fetch(MEMBERS, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({ email }),
+		});
+
+		if (!res.ok) {
+			const responseData = await res.json();
+			throw new Error(responseData.message ?? "Erro ao adicionar novo membro");
+		}
+
+		return;
+	};
+
+	const { mutateAsync, error, isError } = useMutation({
+		mutationFn: postNewMemberData,
+		onSuccess: () => {
+			return router.navigate("/home");
+		},
+	});
+
+	const onSubmit = async (data: FormFields) => await mutateAsync(data.email);
+
 	return (
 		<SafeAreaView style={styles.container}>
-			<Text style={styles.title}>Adicionar Membro</Text>
-			<View style={styles.form}>
-				<View style={styles.inputContainer}></View>
-				<View style={styles.inputContainer}></View>
-				<View style={styles.inputContainer}>
-					<Text style={styles.label}>E-mail</Text>
-					<TextInput
-						style={styles.input}
-						placeholder="Insira seu e-mail"
-						keyboardType="email-address"
-					/>
-				</View>
-				<View style={styles.inputContainer}></View>
-				<View style={styles.inputContainer}></View>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => {
-						/* Lógica de adição */
-					}}
-				>
-					<Icon name="user-plus" size={20} color="#fff" />
-					<Text style={styles.buttonText}> Enviar convite</Text>
-				</TouchableOpacity>
+			<Header title="Novo membro" />
+
+			<View style={styles.content}>
+				<Input
+					label="E-mail"
+					placeholder="E-mail do novo membro"
+					keyboardType="email-address"
+					errorMessage={isError ? error.message : errors.email?.message}
+					onChangeText={(text) => setValue("email", text)}
+				/>
+
+				<Button text="Adicionar" onPress={handleSubmit(onSubmit)} />
 			</View>
 		</SafeAreaView>
 	);
