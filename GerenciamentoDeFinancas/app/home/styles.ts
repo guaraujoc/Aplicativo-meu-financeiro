@@ -1,11 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		backgroundColor: "#1D212A",
-	},
+    scrollContainer: {
+        flex: 1,
+        backgroundColor: "#1D212A",
+    },
+    container: {
+        flexGrow: 1,
+    },
 	topBar: {
 		width: "100%",
 		flexDirection: "row",
@@ -98,3 +100,4 @@ export const styles = StyleSheet.create({
 		height: 100, // Ajuste a altura conforme necessário
 	},
 });
+

@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import {
+	View,
+	Text,
+	Image,
+	TouchableOpacity,
+	Alert,
+	ScrollView
+} from "react-native";
+import { styles } from "./styles";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import MenuButton from "@/components/MenuButton";
-import { styles } from "./styles";
 import LogoutButton from "@/components/LogoutButton";
 import { useGlobalContext } from "@/store";
 
@@ -32,7 +39,7 @@ export default function Index() {
 	};
 
 	return (
-		<View style={styles.container}>
+        <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.container}>
 			<View style={styles.topBar}>
 				<TouchableOpacity onPress={() => Alert.alert("Menu")}>
 					<Icon name="menu" size={30} color="#ffffff" />
@@ -90,7 +97,7 @@ export default function Index() {
 				/>
 				<MenuButton
 					title="Adicionar compra"
-					href="/AddPurchase"
+					href="/NewTransaction"
 					iconName="cart-outline"
 					iconLibrary="Ionicons"
 				/>
@@ -138,6 +145,6 @@ export default function Index() {
 				/>
 			</View>
 			<Text style={styles.groupTitle}>Trocar grupo</Text>
-		</View>
+		</ScrollView>
 	);
 }
