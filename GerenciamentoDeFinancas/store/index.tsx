@@ -9,7 +9,6 @@ interface AuthContextData {
 	token: string | null;
 	saveToken: (tokenValue: string) => void;
 	user: User | null;
-	saveUser: (userData: User) => void;
 	logout: () => void;
 }
 
@@ -67,6 +66,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 		await deleteToken();
 
 		setUser(null);
+		setToken(null);
 
 		return router.navigate("/sign-in");
 	};
@@ -81,7 +81,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 
 	return (
 		<GlobalContext.Provider
-			value={{ token, user, saveToken, logout, saveUser }}
+			value={{ token, user, saveToken, logout }}
 		>
 			{children}
 		</GlobalContext.Provider>
