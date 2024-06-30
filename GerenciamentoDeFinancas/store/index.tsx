@@ -48,6 +48,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 			return;
 		}
 
+		setToken(token);
 		setUser(userData);
 
 		return router.navigate("/home");
@@ -80,9 +81,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 	}, []);
 
 	return (
-		<GlobalContext.Provider
-			value={{ token, user, saveToken, logout }}
-		>
+		<GlobalContext.Provider value={{ token, user, saveToken, logout }}>
 			{children}
 		</GlobalContext.Provider>
 	);
