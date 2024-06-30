@@ -10,10 +10,11 @@ import {
 } from "@expo-google-fonts/inter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { View } from "react-native";
+import { GlobalContextProvider } from "@/store";
 
 const queryClient = new QueryClient();
 
-export default function AuthLayout() {
+export default function Root() {
 	let [fontsLoadedPoppins] = useFontsPoppins({
 		Poppins_600SemiBold,
 	});
@@ -26,9 +27,11 @@ export default function AuthLayout() {
 		return <View></View>;
 	} else {
 		return (
-			<QueryClientProvider client={queryClient}>
-				<Slot />
-			</QueryClientProvider>
+			<GlobalContextProvider>
+				<QueryClientProvider client={queryClient}>
+					<Slot />
+				</QueryClientProvider>
+			</GlobalContextProvider>
 		);
 	}
 }

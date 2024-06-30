@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import { Input } from "@/components/Input";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,8 +9,11 @@ import { styles } from "./styles";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { SIGN_IN } from "@/api";
+import { useGlobalContext } from "@/store";
 
 export default function Index() {
+	const { saveToken, user } = useGlobalContext();
+
 	const {
 		register,
 		setValue,
@@ -21,6 +24,10 @@ export default function Index() {
 	});
 
 	useEffect(() => {
+		if (user) {
+			return router.navigate("/home");
+		}
+
 		register("email");
 		register("password");
 	}, [register]);
@@ -45,6 +52,10 @@ export default function Index() {
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postLoginData,
 		onSuccess: (data) => {
+			const { access_token } = data;
+
+			saveToken(access_token);
+
 			router.navigate("/home");
 		},
 	});
@@ -61,14 +72,14 @@ export default function Index() {
 				<Input
 					label="E-mail"
 					placeholder="Insira seu e-mail"
-					onChangeText={(text) => setValue("email", text.trim())}
+					onChangeText={(text) => setValue("email", text)}
 					errorMessage={isError ? undefined : errors.email?.message}
 				/>
 
 				<Input
 					label="Senha"
 					placeholder="Insira sua senha"
-					onChangeText={(text) => setValue("password", text.trim())}
+					onChangeText={(text) => setValue("password", text)}
 					errorMessage={isError ? error.message : errors.password?.message}
 				/>
 			</View>

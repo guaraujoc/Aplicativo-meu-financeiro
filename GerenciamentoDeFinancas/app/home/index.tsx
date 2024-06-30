@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	Image,
-	TouchableOpacity,
-	Alert,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import MenuButton from "@/components/MenuButton";
+import { styles } from "./styles";
+import LogoutButton from "@/components/LogoutButton";
+import { useGlobalContext } from "@/store";
 
 export default function Index() {
+	const { logout } = useGlobalContext();
 	const [profilePic, setProfilePic] = useState(null);
 
 	const selectImage = () => {
@@ -42,11 +39,7 @@ export default function Index() {
 				</TouchableOpacity>
 				<Text style={styles.title}>Meu financeiro</Text>
 				<TouchableOpacity onPress={() => Alert.alert("Notificações")}>
-					<Icon
-						name="notifications-outline"
-						size={30}
-						color="#ffffff"
-					/>
+					<Icon name="notifications-outline" size={30} color="#ffffff" />
 				</TouchableOpacity>
 			</View>
 			<View style={styles.header}>
@@ -127,7 +120,7 @@ export default function Index() {
 				/>
 				<MenuButton
 					title="Adicionar membro"
-					href="/AddMember"
+					href="/add-member"
 					iconName="group-add"
 					iconLibrary="MaterialIcons"
 				/>
@@ -137,107 +130,14 @@ export default function Index() {
 					iconName="warning-outline"
 					iconLibrary="Ionicons"
 				/>
+				<LogoutButton
+					title="Sair"
+					onPressOut={logout}
+					iconName="log-out-outline"
+					iconLibrary="Ionicons"
+				/>
 			</View>
 			<Text style={styles.groupTitle}>Trocar grupo</Text>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		backgroundColor: "#1D212A",
-	},
-	topBar: {
-		width: "100%",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingTop: 48,
-		paddingBottom: 5,
-		paddingHorizontal: 10,
-		backgroundColor: "#12111E",
-	},
-	title: {
-		color: "#ffffff",
-		fontSize: 20,
-		fontWeight: "bold",
-	},
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginBottom: 20,
-		width: "100%",
-		paddingTop: 20, // Adjust this value to include the top bar height and additional spacing
-	},
-	profilePicContainer: {
-		width: 150,
-		height: 150,
-		borderRadius: 360,
-		overflow: "hidden",
-		marginRight: 30,
-	},
-	profilePic: {
-		width: "100%",
-		height: "100%",
-	},
-	barsContainer: {
-		flex: 1,
-		flexDirection: "column",
-		justifyContent: "space-between",
-		height: 100,
-		marginRight: 20,
-	},
-	bar: {
-		height: 10,
-		borderRadius: 5,
-		backgroundColor: "#cccccc",
-	},
-	familySection: {
-		alignItems: "center",
-		marginBottom: 20,
-	},
-	familyTitle: {
-		color: "#ffffff",
-		fontSize: 18,
-		fontWeight: "bold",
-		marginBottom: 10,
-	},
-	familyPhotosContainer: {
-		flexDirection: "row",
-		justifyContent: "center",
-		gap: 10,
-	},
-	familyPhoto: {
-		width: 30,
-		height: 30,
-		borderRadius: 360,
-		marginHorizontal: 5,
-	},
-	objectiveTitle: {
-		color: "#ffffff",
-		fontSize: 10,
-		marginBottom: 3,
-	},
-	groupTitle: {
-		color: "#ffffff",
-		fontSize: 10,
-		marginTop: 100,
-		textDecorationLine: "underline",
-	},
-	gridContainer: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-evenly",
-		margin: 5,
-		gap: 15,
-	},
-	text: {
-		color: "#ffffff", // Adiciona cor branca ao texto para melhor contraste com o fundo escuro
-	},
-	menuButton: {
-		width: 160, // Ajuste a largura conforme necessário
-		height: 100, // Ajuste a altura conforme necessário
-	},
-});
