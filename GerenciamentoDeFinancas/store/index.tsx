@@ -9,6 +9,7 @@ interface AuthContextData {
 	token: string | null;
 	saveToken: (tokenValue: string) => void;
 	user: User | null;
+	saveUser: (user: User) => void;
 	logout: () => void;
 }
 
@@ -21,8 +22,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 	const loadToken = async () => {
 		try {
 			return await SecureStore.getItemAsync("token");
-		}
-		catch (e) {
+		} catch (e) {
 			return null;
 		}
 	};
@@ -31,7 +31,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 		setToken(tokenValue);
 
 		try {
-			await SecureStore.setItemAsync("token", tokenValue)
+			await SecureStore.setItemAsync("token", tokenValue);
 		} catch (e) {
 			return;
 		}
@@ -42,10 +42,9 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 
 		try {
 			await SecureStore.deleteItemAsync("token");
+		} catch (e) {
+			return;
 		}
-		catch (e) {
-			return
-		};
 	};
 
 	const getUserData = async (token: string) => {
@@ -70,12 +69,16 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 		return router.navigate("/home");
 	};
 
+	const saveUser = async (user: User) => {
+		setUser(user);
+	};
+
 	const autoLogin = async () => {
 		const token = await loadToken();
 		if (!token) {
 			return;
 		}
-		
+
 		return await getUserData(token);
 	};
 
@@ -93,7 +96,9 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 	}, []);
 
 	return (
-		<GlobalContext.Provider value={{ token, user, saveToken, logout }}>
+		<GlobalContext.Provider
+			value={{ token, saveToken, user, saveUser, logout }}
+		>
 			{children}
 		</GlobalContext.Provider>
 	);

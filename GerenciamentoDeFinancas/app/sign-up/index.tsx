@@ -19,7 +19,7 @@ import { useGlobalContext } from "@/store";
 import { styles } from "./styles";
 
 export default function Index() {
-	const { user } = useGlobalContext();
+	const { token, saveToken, user, saveUser } = useGlobalContext();
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] =
 		useState(false);
@@ -67,6 +67,11 @@ export default function Index() {
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postUserData,
 		onSuccess: (data) => {
+			const { access_token, user } = data;
+
+			saveToken(access_token);
+			saveUser(user);
+
 			return router.navigate("/home");
 		},
 	});

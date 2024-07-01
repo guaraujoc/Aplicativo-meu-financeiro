@@ -13,7 +13,7 @@ import { SIGN_IN } from "@/api";
 import { useGlobalContext } from "@/store";
 
 export default function Index() {
-	const { saveToken, user } = useGlobalContext();
+	const { saveToken, user, saveUser } = useGlobalContext();
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 	const {
@@ -54,11 +54,12 @@ export default function Index() {
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postLoginData,
 		onSuccess: (data) => {
-			const { access_token } = data;
+			const { access_token, user } = data;
 
 			saveToken(access_token);
+			saveUser(user);
 
-			router.navigate("/home");
+			return router.navigate("/home");
 		},
 	});
 
