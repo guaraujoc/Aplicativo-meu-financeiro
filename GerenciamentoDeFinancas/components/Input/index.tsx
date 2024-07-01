@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
 	Inter_400Regular,
 	Inter_600SemiBold,
@@ -9,10 +10,20 @@ import { InputProps } from "./types";
 import { styles } from "./styles";
 
 interface CustomInputProps extends InputProps {
-    maskType?: "money" | "default";
+	maskType?: "money" | "default";
 }
 
-export function Input({ label, errorMessage, maskType, ...props }: CustomInputProps) {
+export function Input({
+	label,
+	errorMessage,
+	maskType,
+	keyboardType,
+	placeholder,
+	onChangeText,
+	...props
+}: CustomInputProps) {
+	const [value, setValue] = useState("");
+
 	let [fontsLoaded] = useFonts({
 		Inter_400Regular,
 		Inter_600SemiBold,
@@ -26,26 +37,42 @@ export function Input({ label, errorMessage, maskType, ...props }: CustomInputPr
 				<Text style={styles.label}>{label}</Text>
 
 				{maskType === "money" ? (
-                    <TextInputMask
-                        type={"money"}
-                        options={{
-                            precision: 2,
-                            separator: ',',
-                            delimiter: '.',
-                            unit: 'R$ ',
-                            suffixUnit: ''
-                        }}
-                        {...props}
-                        placeholderTextColor={styles.inputPlaceholder.color}
-                        style={errorMessage ? styles.errorInput : styles.input}
-                    />
-                ) : (
-                    <TextInput
-                        {...props}
-                        placeholderTextColor={styles.inputPlaceholder.color}
-                        style={errorMessage ? styles.errorInput : styles.input}
-                    />
-                )}
+					<TextInputMask
+						type={"money"}
+						value={value}
+						keyboardType={keyboardType}
+						placeholder={placeholder}
+						placeholderTextColor={styles.inputPlaceholder.color}
+						style={errorMessage ? styles.errorInput : styles.input}
+						options={{
+							precision: 2,
+							separator: ",",
+							delimiter: ".",
+							unit: "R$ ",
+							suffixUnit: "",
+						}}
+						onChangeText={(text) => {
+							setValue(text);
+							const numericValue = parseFloat(
+								text.replace(/[^0-9,-]/g, "").replace(",", ".")
+							);
+							onChangeText && onChangeText(text);
+						}}
+					/>
+				) : (
+					<TextInput
+						{...props}
+						value={value}
+						keyboardType={keyboardType}
+						placeholder={placeholder}
+						placeholderTextColor={styles.inputPlaceholder.color}
+						style={errorMessage ? styles.errorInput : styles.input}
+						onChangeText={(text) => {
+							setValue(text);
+							onChangeText && onChangeText(text);
+						}}
+					/>
+				)}
 
 				{errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
 			</View>

@@ -1,119 +1,205 @@
-import React, { useState } from "react";
-import {
-    ScrollView,
-    View,
-    Text,
-    TouchableOpacity,
-    Switch,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View, Text, TouchableOpacity, Switch } from "react-native";
 import { styles } from "./styles";
-import GoBack from "@/components/GoBack";
 import { Input } from "@/components/Input";
-import Selector from '@/components/Selector';
-import InpurDate from '@/components/InputDate';
+import Selector from "@/components/Selector";
+import Button from "@/components/Button";
 
+import { TransactionFields, transactionValidationSchema } from "./types";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { TRANSACTION } from "@/api";
+import { useGlobalContext } from "@/store";
+import Header from "@/components/Header";
 
 export default function TransactionScreen() {
-    const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState("");
-    const [type, setType] = useState("Despesa");
-    const [date, setDate] = useState(new Date());
-    const [category, setCategory] = useState("");
-    const [isInstallment, setIsInstallment] = useState(false);
-    const [installmentCount, setInstallmentCount] = useState("");
-    const [categories, setCategories] = useState(['Alimentação', 'Transporte', 'Lazer', 'Educação']);
+	const { token } = useGlobalContext();
 
-    const handleSave = () => {
-        // Implement your save logic here
-    };
+	const [categories] = useState([
+		"Alimentação",
+		"Transporte",
+		"Lazer",
+		"Casa",
+		"Outros",
+	]);
+	const [type, setType] = useState("Despesa");
+	const [category, setCategory] = useState("");
+	const [isInstallment, setIsInstallment] = useState(false);
 
-    const handleAddCategory = (newCategory: string) => {
-        setCategories([...categories, newCategory]);
-    };
+	const {
+		register,
+		setValue,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<TransactionFields>({
+		resolver: yupResolver(transactionValidationSchema),
+	});
 
-    const handleInstallmentCountChange = (text: string) => {
-        const numericText = text.replace(/[^0-9]/g, '');
-        setInstallmentCount(numericText ? numericText : '');
-    };
+	useEffect(() => {
+		register("title");
+		register("amount");
+		register("type");
+		register("category");
+		register("installmentCount");
+	}, [register]);
 
-    return (
-        <ScrollView style={styles.container}>
-            <GoBack />
-            <Text style={styles.title}>
-                Transação<Text style={styles.point}>.</Text>
-            </Text>
-            <View style={styles.inputs}>
-                <Input
-                    label="Título"
-                    placeholder="Identifique sua transação"
-                    value={title}
-                    onChangeText={setTitle}
-                    errorMessage={""}
-                />
-                <Input
-                    label="Valor"
-                    placeholder="$ 0.00"
-                    value={amount}
-                    onChangeText={setAmount}
-                    errorMessage={""}
-                    maskType="money"
-                />
-                <InpurDate />
-                <Text style={[styles.typeButtonText]} >Tipo</Text>
-                <View style={styles.typeContainer}>
-                    <TouchableOpacity 
-                        style={[styles.typeButton, type === "Despesa" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Despesa")}
-                    >
-                        <Text style={[styles.typeButtonText, type === "Despesa" && styles.typeButtonTextSelected]}>Despesa</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={[styles.typeButton, type === "Receita" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Receita")}
-                    >
-                        <Text style={[styles.typeButtonText, type === "Receita" && styles.typeButtonTextSelected]}>Receita</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={[styles.typeButton, type === "Investimento" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Investimento")}
-                    >
-                        <Text style={[styles.typeButtonText, type === "Investimento" && styles.typeButtonTextSelected]}>Investimento</Text>
-                    </TouchableOpacity>
-                </View>
+	useEffect(() => {
+		setValue("type", "Despesa");
+		setValue("isInstallment", false);
+		setValue("installmentCount", 1);
+	}, []);
 
-                <Text style={[styles.typeButtonText]} >Categoria</Text>
-                {type !== 'Receita' && (
-                    <>
-                        <Selector
-                            categories={categories}
-                            selectedCategory={category}
-                            onCategorySelect={setCategory}
-                            onAddCategory={handleAddCategory}
-                        />
-                        <View style={styles.switchContainer}>
-                            <Text style={[styles.typeButtonText]} >Parcelado?</Text>
-                            <Switch
-                                value={isInstallment}
-                                onValueChange={setIsInstallment}
-                            />
-                        </View>
-                        {isInstallment && (
-                            <Input
-                                label="Quantidade de parcelas"
-                                placeholder="1"
-                                value={installmentCount}
-                                onChangeText={handleInstallmentCountChange}
-                                keyboardType="numeric"
-                                errorMessage={''}
-                            />
-                        )}
-                    </>
-                )}
+	const postTransactionData = async (data: TransactionFields) => {
+		const res = await fetch(TRANSACTION, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(data),
+		});
 
-                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.saveButtonText}>Salvar</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
-    );
+		if (!res.ok) {
+			const responseData = await res.json();
+			throw new Error(responseData.message ?? "Erro ao registrar transação");
+		}
+
+		return res.json();
+	};
+
+	const { mutateAsync, isError } = useMutation({
+		mutationFn: postTransactionData,
+		onSuccess: (data) => {
+			console.log(data);
+			router.navigate("/home");
+		},
+		onError: (e) => {
+			console.log(e);
+		},
+	});
+
+	const onSubmit = async (data: TransactionFields) => {
+		console.log("vou enviar", data);
+		await mutateAsync(data);
+	};
+
+	return (
+		<ScrollView style={styles.container}>
+			<Header title="Transação" />
+
+			<View style={styles.content}>
+				<View style={styles.inputs}>
+					<Input
+						label="Título"
+						placeholder="Identifique sua transação"
+						onChangeText={(text) => setValue("title", text)}
+						errorMessage={isError ? undefined : errors.title?.message}
+					/>
+
+					<Input
+						label="Valor"
+						placeholder="R$ 0,00"
+						maskType="money"
+						keyboardType="numeric"
+						onChangeText={(text) => {
+							const numericValue = parseFloat(
+								text.replace(/[^\d,-]/g, "").replace(",", ".")
+							);
+							setValue("amount", isNaN(numericValue) ? 0 : numericValue);
+						}}
+						errorMessage={isError ? undefined : errors.amount?.message}
+					/>
+
+					<Text style={[styles.typeButtonText]}>Tipo</Text>
+					<View style={styles.typeContainer}>
+						<TouchableOpacity
+							style={[
+								styles.typeButton,
+								type === "Despesa" && styles.typeButtonSelected,
+							]}
+							onPress={() => {
+								setType("Despesa");
+								setValue("type", "Despesa");
+							}}
+						>
+							<Text
+								style={[
+									styles.typeButtonText,
+									type === "Despesa" && styles.typeButtonTextSelected,
+								]}
+							>
+								Despesa
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[
+								styles.typeButton,
+								type === "Receita" && styles.typeButtonSelected,
+							]}
+							onPress={() => {
+								setType("Receita");
+								setValue("type", "Receita");
+							}}
+						>
+							<Text
+								style={[
+									styles.typeButtonText,
+									type === "Receita" && styles.typeButtonTextSelected,
+								]}
+							>
+								Receita
+							</Text>
+						</TouchableOpacity>
+					</View>
+
+					{type !== "Receita" && (
+						<>
+							<Text style={[styles.typeButtonText]}>Categoria</Text>
+							<Selector
+								categories={categories}
+								selectedCategory={category}
+								onCategorySelect={(selectedCategory) => {
+									setCategory(selectedCategory);
+									setValue("category", selectedCategory);
+								}}
+								errorMessage={isError ? undefined : errors.title?.message}
+							/>
+							<View style={styles.switchContainer}>
+								<Text style={[styles.typeButtonText]}>Parcelado?</Text>
+								<Switch
+									value={isInstallment}
+									onValueChange={(value) => {
+										setIsInstallment(value);
+										setValue("isInstallment", value);
+										if (value === false) {
+											setValue("installmentCount", 1);
+										}
+									}}
+								/>
+							</View>
+
+							{isInstallment && (
+								<Input
+									label="Quantidade de parcelas"
+									placeholder="1"
+									onChangeText={(text) =>
+										setValue(
+											"installmentCount",
+											parseInt(text.replace(/[^0-9]/g, ""))
+										)
+									}
+									keyboardType="numeric"
+									errorMessage={errors.installmentCount?.message}
+								/>
+							)}
+						</>
+					)}
+				</View>
+
+				<Button text="Salvar" onPress={handleSubmit(onSubmit)} />
+			</View>
+		</ScrollView>
+	);
 }
