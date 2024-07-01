@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 import Button from "@/components/Button";
 import { Input } from "@/components/Input";
 import { FormFields, formValidationSchema } from "./types";
@@ -69,7 +69,7 @@ export default function Index() {
 			<Text style={styles.title}>
 				Login<Text style={styles.point}>.</Text>
 			</Text>
-			
+
 			<View style={styles.content}>
 				<View style={styles.inputs}>
 					<Input
@@ -79,26 +79,25 @@ export default function Index() {
 						errorMessage={isError ? undefined : errors.email?.message}
 					/>
 
-					<View style={styles.passwordContainer}>
-						<Input
-							label="Senha"
-							placeholder="Insira sua senha"
-							secureTextEntry={!isPasswordVisible}
-							onChangeText={(text) => setValue("password", text)}
-							errorMessage={isError ? error.message : errors.password?.message}
-						/>
-					</View>
+					<Input
+						label="Senha"
+						placeholder="Insira sua senha"
+						secureTextEntry={!isPasswordVisible}
+						onChangeText={(text) => setValue("password", text)}
+						errorMessage={isError ? error.message : errors.password?.message}
+					/>
 				</View>
 
 				<View>
 					<Button text="Entrar" onPress={handleSubmit(onSubmit)} />
 					<Text style={styles.loginText}>
 						Não possui uma conta?{" "}
-						<Link href="/sign-up" style={styles.loginTextStrong}>Faça o cadastro.</Link>
+						<Link href="/sign-up" style={styles.loginTextStrong}>
+							Faça o cadastro.
+						</Link>
 					</Text>
 				</View>
 			</View>
 		</View>
 	);
 }
-
