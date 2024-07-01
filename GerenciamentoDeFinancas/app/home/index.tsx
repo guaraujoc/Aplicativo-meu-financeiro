@@ -95,28 +95,10 @@ export default function Index() {
 					iconLibrary="Ionicons"
 				/>
 				<MenuButton
-					title="Adicionar investimento"
-					href="/AddInvestment"
-					iconName="cart-outline"
-					iconLibrary="Ionicons"
-				/>
-				<MenuButton
-					title="Extrato"
-					href="/Statement"
-					iconName="file-invoice-dollar"
-					iconLibrary="FontAwesome5"
-				/>
-				<MenuButton
 					title="Meus objetivos"
 					href="/objectives"
 					iconName="bar-graph"
 					iconLibrary="Entypo"
-				/>
-				<MenuButton
-					title="Meus investimentos"
-					href="/MyInvestments"
-					iconName="bank"
-					iconLibrary="FontAwesome"
 				/>
 				<MenuButton
 					title="Adicionar membro"
