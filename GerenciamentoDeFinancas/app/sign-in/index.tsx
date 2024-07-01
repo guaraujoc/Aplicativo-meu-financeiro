@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { FormFields, formValidationSchema } from "./types";
 import { styles } from "./styles";
 import { useMutation } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { SIGN_IN } from "@/api";
 import { useGlobalContext } from "@/store";
 
@@ -67,24 +67,32 @@ export default function Index() {
 			<Text style={styles.title}>
 				Login<Text style={styles.point}>.</Text>
 			</Text>
+			
+			<View style={styles.content}>
+				<View style={styles.inputs}>
+					<Input
+						label="E-mail"
+						placeholder="Insira seu e-mail"
+						onChangeText={(text) => setValue("email", text)}
+						errorMessage={isError ? undefined : errors.email?.message}
+					/>
 
-			<View style={styles.inputs}>
-				<Input
-					label="E-mail"
-					placeholder="Insira seu e-mail"
-					onChangeText={(text) => setValue("email", text)}
-					errorMessage={isError ? undefined : errors.email?.message}
-				/>
+					<Input
+						label="Senha"
+						placeholder="Insira sua senha"
+						onChangeText={(text) => setValue("password", text)}
+						errorMessage={isError ? error.message : errors.password?.message}
+					/>
+				</View>
 
-				<Input
-					label="Senha"
-					placeholder="Insira sua senha"
-					onChangeText={(text) => setValue("password", text)}
-					errorMessage={isError ? error.message : errors.password?.message}
-				/>
+				<View>
+					<Button text="Entrar" onPress={handleSubmit(onSubmit)} />
+					<Text style={styles.loginText}>
+						Não possui uma conta?{" "}
+						<Link href="/sign-up" style={styles.loginTextStrong}>Faça o cadastro.</Link>
+					</Text>
+				</View>
 			</View>
-
-			<Button text="Entrar" onPress={handleSubmit(onSubmit)} />
 		</View>
 	);
 }

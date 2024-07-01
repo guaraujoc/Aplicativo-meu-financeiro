@@ -2,10 +2,10 @@ import { Dimensions, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
 	container: {
-		minHeight: Dimensions.get("window").height,
 		backgroundColor: "#F8FAFC",
 		paddingVertical: 48,
 		paddingHorizontal: 16,
+		flex: 1,
 	},
 	title: {
 		fontSize: 36,
@@ -13,6 +13,10 @@ export const styles = StyleSheet.create({
 		marginBottom: 24,
 		fontFamily: "Poppins_600SemiBold",
 		textAlign: "center",
+	},
+	content: {
+		flex: 1,
+		justifyContent: "space-between"
 	},
 	point: {
 		color: "#6366F1",
