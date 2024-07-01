@@ -15,14 +15,6 @@ const AddMemberScreen = () => {
         <Icon name="wallet" size={24} color="#000" />
         <Text style={styles.title}>Minha carteira</Text>
       </View>
-      
-      <View style={styles.rectangle}>
-        <Text style={styles.rectangleText}>Sua situação financeira:</Text>
-        <View style={styles.valueContainer}>
-          <Text style={styles.valueText}>R$</Text>
-          <Text style={[styles.valueText, styles.valueAmount]}>{hideValues ? '*****' : '1000,00'}</Text>
-        </View>
-      </View>
 
       <View style={styles.rectangle}>
       <Text style={styles.rectangleText}>Saldo disponível:</Text>
