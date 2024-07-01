@@ -66,16 +66,6 @@ export default function Index() {
 						style={styles.profilePic}
 					/>
 				</TouchableOpacity>
-				<View style={styles.barsContainer}>
-					<Text style={styles.objectiveTitle}>Objetivo 1</Text>
-					<View style={styles.bar} />
-					<Text style={styles.objectiveTitle}>Objetivo 2</Text>
-					<View style={styles.bar} />
-					<Text style={styles.objectiveTitle}>Objetivo 3</Text>
-					<View style={styles.bar} />
-					<Text style={styles.objectiveTitle}>Objetivo 4</Text>
-					<View style={styles.bar} />
-				</View>
 			</View>
 			<View style={styles.familySection}>
 				<Text style={styles.familyTitle}>Minha família</Text>
@@ -94,7 +84,7 @@ export default function Index() {
 			<View id="Grid" style={styles.gridContainer}>
 				<MenuButton
 					title="Minha carteira"
-					href="/WalletComposition"
+					href="/Wallet"
 					iconName="wallet-outline"
 					iconLibrary="Ionicons"
 				/>
