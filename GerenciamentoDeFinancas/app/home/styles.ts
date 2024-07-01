@@ -24,13 +24,13 @@ export const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 	header: {
-		flexDirection: "row",
 		alignItems: "center",
 		marginBottom: 20,
 		width: "100%",
 		paddingTop: 20, // Adjust this value to include the top bar height and additional spacing
 	},
 	profilePicContainer: {
+		alignItems: "center",
 		width: 150,
 		height: 150,
 		borderRadius: 360,
