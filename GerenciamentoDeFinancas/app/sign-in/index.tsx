@@ -1,9 +1,10 @@
-import Button from "@/components/Button";
-import { Input } from "@/components/Input";
-import { useEffect } from "react";
-import { Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Icon from 'react-native-vector-icons/Ionicons';
+import Button from "@/components/Button";
+import { Input } from "@/components/Input";
 import { FormFields, formValidationSchema } from "./types";
 import { styles } from "./styles";
 import { useMutation } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ import { useGlobalContext } from "@/store";
 
 export default function Index() {
 	const { saveToken, user } = useGlobalContext();
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 	const {
 		register,
@@ -77,12 +79,15 @@ export default function Index() {
 						errorMessage={isError ? undefined : errors.email?.message}
 					/>
 
-					<Input
-						label="Senha"
-						placeholder="Insira sua senha"
-						onChangeText={(text) => setValue("password", text)}
-						errorMessage={isError ? error.message : errors.password?.message}
-					/>
+					<View style={styles.passwordContainer}>
+						<Input
+							label="Senha"
+							placeholder="Insira sua senha"
+							secureTextEntry={!isPasswordVisible}
+							onChangeText={(text) => setValue("password", text)}
+							errorMessage={isError ? error.message : errors.password?.message}
+						/>
+					</View>
 				</View>
 
 				<View>
@@ -96,3 +101,4 @@ export default function Index() {
 		</View>
 	);
 }
+

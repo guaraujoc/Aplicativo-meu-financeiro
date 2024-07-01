@@ -1,18 +1,21 @@
+import React, { useState, useEffect } from "react";
+import { ScrollView, Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { useForm } from "react-hook-form";
-import { FormFields, formValidationSchema } from "./types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
-import { USERS } from "@/api";
-import { useMutation } from "@tanstack/react-query";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Link, router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
-import { styles } from "./styles";
+import { useMutation } from "@tanstack/react-query";
+import { USERS } from "@/api";
+import { FormFields, formValidationSchema } from "./types";
 import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import { useGlobalContext } from "@/store";
+import { styles } from "./styles";
 
 export default function Index() {
 	const { user } = useGlobalContext();
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] = useState(false);
 
 	const {
 		register,
@@ -35,9 +38,7 @@ export default function Index() {
 		register("passwordConfirmation");
 	}, [register]);
 
-	const postUserData = async (
-		data: Omit<FormFields, "passwordConfirmation">
-	) => {
+	const postUserData = async (data: Omit<FormFields, "passwordConfirmation">) => {
 		const res = await fetch(USERS, {
 			method: "POST",
 			headers: {
@@ -61,8 +62,7 @@ export default function Index() {
 		},
 	});
 
-	const onSubmit = async ({ passwordConfirmation, ...data }: FormFields) =>
-		await mutateAsync(data);
+	const onSubmit = async ({ passwordConfirmation, ...data }: FormFields) => await mutateAsync(data);
 
 	return (
 		<ScrollView style={styles.container}>
@@ -92,19 +92,25 @@ export default function Index() {
 					errorMessage={isError ? error.message : errors.email?.message}
 				/>
 
-				<Input
-					label="Senha"
-					placeholder="Crie uma senha"
-					onChangeText={(text) => setValue("password", text)}
-					errorMessage={errors.password?.message}
-				/>
+				<View style={styles.passwordContainer}>
+					<Input
+						label="Senha"
+						placeholder="Crie uma senha"
+						secureTextEntry={!isPasswordVisible}
+						onChangeText={(text) => setValue("password", text)}
+						errorMessage={errors.password?.message}
+					/>
+				</View>
 
-				<Input
-					label="Senha"
-					placeholder="Confirme sua senha"
-					onChangeText={(text) => setValue("passwordConfirmation", text)}
-					errorMessage={errors.passwordConfirmation?.message}
-				/>
+				<View style={styles.passwordContainer}>
+					<Input
+						label="Confirme sua senha"
+						placeholder="Confirme sua senha"
+						secureTextEntry={!isPasswordConfirmationVisible}
+						onChangeText={(text) => setValue("passwordConfirmation", text)}
+						errorMessage={errors.passwordConfirmation?.message}
+					/>
+				</View>
 			</View>
 
 			<Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
@@ -118,3 +124,5 @@ export default function Index() {
 		</ScrollView>
 	);
 }
+
+
