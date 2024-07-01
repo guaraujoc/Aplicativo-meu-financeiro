@@ -4,7 +4,7 @@ export interface TransactionFields {
 	title: string;
 	amount: number;
 	type: string;
-	category: string;
+	category?: string;
 	isInstallment: boolean;
 	installmentCount?: number;
 }
@@ -16,7 +16,13 @@ export const transactionValidationSchema = yup.object().shape({
 		.required("Valor é obrigatório")
 		.typeError("Valor deve ser um número"),
 	type: yup.string().required("Tipo é obrigatório"),
-	category: yup.string().required("Categoria é obrigatória"),
+	category: yup.string().when("user_type", {
+		is: (val: string) => {
+			return val === "Despesa";
+		},
+		then: (c) => c.required("Categoria é obrigatória"),
+		otherwise: (c) => c,
+	}),
 	isInstallment: yup.boolean().required(),
 	installmentCount: yup
 		.number()
