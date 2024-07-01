@@ -8,13 +8,14 @@ import { useForm } from "react-hook-form";
 import { FormFields, PostObjectiveData, formValidationSchema } from "./types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { OBJECTIVES } from "@/api";
 import { useGlobalContext } from "@/store";
 import { router } from "expo-router";
 
 export default function Index() {
 	const { token } = useGlobalContext();
+	const queryClient = useQueryClient();
 
 	const {
 		register,
@@ -50,12 +51,9 @@ export default function Index() {
 
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postObjectiveData,
-		onSuccess: (data) => {
-			console.log(data);
-			router.navigate("/home");
-		},
-		onError: (error) => {
-			console.log("erro", error);
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["objectives"] });
+			router.navigate("/objectives");
 		},
 	});
 
@@ -75,7 +73,7 @@ export default function Index() {
 					<Input
 						label="Título"
 						placeholder="Identifique seu objetivo"
-						errorMessage={errors.title?.message}
+						errorMessage={isError ? error.message : errors.title?.message}
 						onChangeText={(text) => setValue("title", text)}
 					/>
 

@@ -118,7 +118,7 @@ export default function Index() {
 				/>
 				<MenuButton
 					title="Meus objetivos"
-					href="/new-objective"
+					href="/objectives"
 					iconName="bar-graph"
 					iconLibrary="Entypo"
 				/>
