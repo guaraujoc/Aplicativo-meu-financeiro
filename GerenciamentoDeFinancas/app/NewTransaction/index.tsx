@@ -10,31 +10,49 @@ import { styles } from "./styles";
 import GoBack from "@/components/GoBack";
 import { Input } from "@/components/Input";
 import Selector from '@/components/Selector';
-import InpurDate from '@/components/InputDate';
+import Button from "@/components/Button";
 
+import { TransactionFields, transactionValidationSchema } from "./types";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { NEW_TRANSACTION } from "@/api";
 
 export default function TransactionScreen() {
-    const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState("");
+    const [categories] = useState(['Alimentação', 'Transporte', 'Lazer', 'Casa', 'Outros']);
     const [type, setType] = useState("Despesa");
-    const [date, setDate] = useState(new Date());
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState(""); 
     const [isInstallment, setIsInstallment] = useState(false);
-    const [installmentCount, setInstallmentCount] = useState("");
-    const [categories, setCategories] = useState(['Alimentação', 'Transporte', 'Lazer', 'Educação']);
+    const { register, setValue, handleSubmit, formState: { errors } } = useForm<TransactionFields>({
+		resolver: yupResolver(transactionValidationSchema),
+	});
+    
+    const postTransactionData = async (data: TransactionFields) => {
+        const res = await fetch(NEW_TRANSACTION, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
-    const handleSave = () => {
-        // Implement your save logic here
+        if (!res.ok) {
+            const responseData = await res.json();
+            throw new Error(responseData.message ?? "Erro ao registrar transação");
+        }
+
+        return res.json();
     };
 
-    const handleAddCategory = (newCategory: string) => {
-        setCategories([...categories, newCategory]);
-    };
+	const { mutateAsync, error, isError } = useMutation({
+		mutationFn: postTransactionData,
+		onSuccess: (data) => {
+			router.navigate("/home");
+		},
+	});
 
-    const handleInstallmentCountChange = (text: string) => {
-        const numericText = text.replace(/[^0-9]/g, '');
-        setInstallmentCount(numericText ? numericText : '');
-    };
+	const onSubmit = async (data: TransactionFields) => await mutateAsync(data);
 
     return (
         <ScrollView style={styles.container}>
@@ -46,73 +64,76 @@ export default function TransactionScreen() {
                 <Input
                     label="Título"
                     placeholder="Identifique sua transação"
-                    value={title}
-                    onChangeText={setTitle}
-                    errorMessage={""}
+                    onChangeText={(text) => setValue("title", text.trim())}
+                    errorMessage={isError ? undefined : errors.title?.message}
                 />
                 <Input
                     label="Valor"
-                    placeholder="$ 0.00"
-                    value={amount}
-                    onChangeText={setAmount}
-                    errorMessage={""}
+                    placeholder="R$ 0,00"
                     maskType="money"
+                    keyboardType="numeric"
+                    onChangeText={(text) => {
+                        const numericValue = parseFloat(text.replace(/[^\d,-]/g, '').replace(',', '.'));
+                        // console.log(numericValue)
+                        setValue("amount", isNaN(numericValue) ? 0 : numericValue);
+                    }}
+                    errorMessage={isError ? undefined : errors.amount?.message}
                 />
-                <InpurDate />
+                {/* <InpurDate /> */}
                 <Text style={[styles.typeButtonText]} >Tipo</Text>
                 <View style={styles.typeContainer}>
                     <TouchableOpacity 
                         style={[styles.typeButton, type === "Despesa" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Despesa")}
-                    >
+                        onPress={() => { 
+                            setType("Despesa");
+                            setValue("type", "Despesa");
+                        }}                    >
                         <Text style={[styles.typeButtonText, type === "Despesa" && styles.typeButtonTextSelected]}>Despesa</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={[styles.typeButton, type === "Receita" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Receita")}
-                    >
+                        onPress={() => { 
+                            setType("Receita");
+                            setValue("type", "Receita");
+                        }}                    >
                         <Text style={[styles.typeButtonText, type === "Receita" && styles.typeButtonTextSelected]}>Receita</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={[styles.typeButton, type === "Investimento" && styles.typeButtonSelected]} 
-                        onPress={() => setType("Investimento")}
-                    >
-                        <Text style={[styles.typeButtonText, type === "Investimento" && styles.typeButtonTextSelected]}>Investimento</Text>
                     </TouchableOpacity>
                 </View>
 
-                <Text style={[styles.typeButtonText]} >Categoria</Text>
                 {type !== 'Receita' && (
                     <>
+                        <Text style={[styles.typeButtonText]} >Categoria</Text>
                         <Selector
                             categories={categories}
                             selectedCategory={category}
-                            onCategorySelect={setCategory}
-                            onAddCategory={handleAddCategory}
+                            onCategorySelect={(selectedCategory) => {
+                                setCategory(selectedCategory);
+                                setValue("category", selectedCategory);
+                            }}
                         />
                         <View style={styles.switchContainer}>
                             <Text style={[styles.typeButtonText]} >Parcelado?</Text>
                             <Switch
                                 value={isInstallment}
-                                onValueChange={setIsInstallment}
+                                onValueChange={(value) => {
+                                    setIsInstallment(value);
+                                    setValue("isInstallment", value);
+                                }}
                             />
                         </View>
                         {isInstallment && (
                             <Input
                                 label="Quantidade de parcelas"
                                 placeholder="1"
-                                value={installmentCount}
-                                onChangeText={handleInstallmentCountChange}
-                                keyboardType="numeric"
-                                errorMessage={''}
+                                onChangeText={(text) => setValue("installmentCount", parseInt(text.replace(/[^0-9]/g, '')))}                                keyboardType="numeric"
+                                errorMessage={errors.installmentCount?.message}
                             />
                         )}
                     </>
                 )}
 
-                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.saveButtonText}>Salvar</Text>
-                </TouchableOpacity>
+                <Button text="Salvar" onPress={handleSubmit(onSubmit)} />
+
             </View>
         </ScrollView>
     );

@@ -5,7 +5,6 @@ import {
     TouchableOpacity,
     Modal,
     FlatList,
-    TextInput,
 } from 'react-native';
 import { styles } from './styles';
 import Button from "@/components/Button";
@@ -14,19 +13,10 @@ interface SelectorProps {
     categories: string[];
     selectedCategory: string;
     onCategorySelect: (category: string) => void;
-    onAddCategory: (category: string) => void;
 }
 
-const Selector: React.FC<SelectorProps> = ({ categories, selectedCategory, onCategorySelect, onAddCategory }) => {
+const Selector: React.FC<SelectorProps> = ({ categories, selectedCategory, onCategorySelect }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [newCategory, setNewCategory] = useState('');
-
-    const handleAddCategory = () => {
-        if (newCategory.trim()) {
-            onAddCategory(newCategory);
-            setNewCategory('');
-        }
-    };
 
     return (
         <View>
@@ -53,13 +43,6 @@ const Selector: React.FC<SelectorProps> = ({ categories, selectedCategory, onCat
                                 </TouchableOpacity>
                             )}
                         />
-                        <TextInput
-                            placeholder="Nova categoria"
-                            value={newCategory}
-                            onChangeText={setNewCategory}
-                            style={styles.input}
-                        />
-                        <Button text="Adicionar" onPress={handleAddCategory} />
                         <Button text="Fechar" onPress={() => setModalVisible(false)} />
                     </View>
                 </View>
