@@ -19,17 +19,33 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 	const [user, setUser] = useState<User | null>(null);
 
 	const loadToken = async () => {
-		return await SecureStore.getItemAsync("token");
+		try {
+			return await SecureStore.getItemAsync("token");
+		}
+		catch (e) {
+			return null;
+		}
 	};
 
 	const saveToken = async (tokenValue: string) => {
 		setToken(tokenValue);
-		return await SecureStore.setItemAsync("token", tokenValue);
+
+		try {
+			await SecureStore.setItemAsync("token", tokenValue)
+		} catch (e) {
+			return;
+		}
 	};
 
 	const deleteToken = async () => {
 		setToken(null);
-		return await SecureStore.deleteItemAsync("token");
+
+		try {
+			await SecureStore.deleteItemAsync("token");
+		}
+		catch (e) {
+			return
+		};
 	};
 
 	const getUserData = async (token: string) => {
@@ -59,7 +75,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 		if (!token) {
 			return;
 		}
-
+		
 		return await getUserData(token);
 	};
 
@@ -70,10 +86,6 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
 		setToken(null);
 
 		return router.navigate("/sign-in");
-	};
-
-	const saveUser = async (userData: User) => {
-		setUser(userData);
 	};
 
 	useEffect(() => {
