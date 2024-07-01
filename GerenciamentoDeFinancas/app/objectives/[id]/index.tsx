@@ -5,11 +5,12 @@ import { styles } from "./styles";
 import Button from "@/components/Button";
 import { OBJECTIVES } from "@/api";
 import { useGlobalContext } from "@/store";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Index() {
 	const { token } = useGlobalContext();
 	const { id } = useLocalSearchParams();
+	const queryClient = useQueryClient();
 
 	const getObjectiveData = async () => {
 		const res = await fetch(`${OBJECTIVES}/${id}`, {
@@ -28,9 +29,37 @@ export default function Index() {
 	};
 
 	const { data, isError, isPending, isSuccess } = useQuery({
-		queryKey: ["objetives"],
+		queryKey: ["objectives"],
 		queryFn: getObjectiveData,
 	});
+
+	const deleteObjective = async () => {
+		const res = await fetch(`${OBJECTIVES}/${id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		if (!res.ok) {
+			throw new Error("Erro ao deletar objetivo");
+		}
+
+		return;
+	};
+
+	const { mutateAsync, isPending: isDeletePending } = useMutation({
+		mutationFn: deleteObjective,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["objectives"] });
+			return router.navigate("/objectives");
+		},
+	});
+
+	const onSubmit = async () => {
+		await mutateAsync();
+	};
 
 	return (
 		<View style={styles.container}>
@@ -57,8 +86,10 @@ export default function Index() {
 							<Button
 								text="Editar"
 								onPress={() => router.navigate(`/objectives/${id}/edit`)}
+								disabled={isDeletePending}
 							/>
-							<Button text="Excluir" onPress={() => {}} />
+
+							<Button text="Excluir" onPress={onSubmit} />
 						</View>
 					</>
 				)}

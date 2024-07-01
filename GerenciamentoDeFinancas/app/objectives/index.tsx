@@ -28,15 +28,10 @@ export default function Index() {
 		return res.json();
 	};
 
-	const { data, isError, isPending, error, isSuccess } = useQuery({
-		queryKey: ["objetives"],
+	const { data, isError, isPending, isSuccess } = useQuery({
+		queryKey: ["objectives"],
 		queryFn: getObjectivesData,
 	});
-
-	if (isError) {
-		console.log(token);
-		console.log(error);
-	}
 
 	return (
 		<View style={styles.container}>

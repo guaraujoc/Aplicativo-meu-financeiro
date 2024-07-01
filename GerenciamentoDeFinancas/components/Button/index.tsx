@@ -13,7 +13,11 @@ export default function Button(props: ButtonProps) {
 		return <View></View>;
 	} else {
 		return (
-			<TouchableOpacity style={styles.container} onPressOut={props.onPress}>
+			<TouchableOpacity
+				{...props}
+				style={styles.container}
+				onPressOut={props.onPress}
+			>
 				<Text style={styles.text}>{props.text}</Text>
 			</TouchableOpacity>
 		);
