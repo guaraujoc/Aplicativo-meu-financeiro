@@ -5,4 +5,9 @@ export interface Objective {
 	email: string;
 	userId: string;
 	familyId: string;
+	createdAt: string;
+	creator: {
+		firstName: string;
+		lastName: string;
+	}
 }

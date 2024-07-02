@@ -41,23 +41,31 @@ export default function TransactionsContent({
 		<View>
 			<Text style={styles.secondaryTitle}>Ativos</Text>
 			<View style={styles.objectives}>
-				{remaining.map((objective: Objective) => (
+				{remaining.length > 0 ? remaining.map((objective: Objective) => (
 					<ObjectiveCard
 						key={objective.id}
 						objectiveData={objective}
-						availableBalance={10}
+						availableBalance={balance}
+						finished={false}
 					/>
-				))}
+				)) : <Text>Não há objetivos ativos</Text> }
 			</View>
 			
 			<Text style={styles.secondaryTitle}>Concluídos</Text>
-			{finished.map((objective: Objective) => (
-				<ObjectiveCard
-					key={objective.id}
-					objectiveData={objective}
-					availableBalance={10}
-				/>
-			))}
+			<View style={styles.objectives}>
+				{finished.length > 0 ? finished.map((objective: Objective) => {
+					console.log(objective)
+					
+					return (
+						<ObjectiveCard
+							key={objective.id}
+							objectiveData={objective}
+							availableBalance={balance}
+							finished
+						/>
+					)
+				}) : <Text>Não há objetivos concluídos</Text> }
+			</View>
 		</View>
 	);
 }

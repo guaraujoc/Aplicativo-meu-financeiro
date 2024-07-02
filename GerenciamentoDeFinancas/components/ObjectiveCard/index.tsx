@@ -10,6 +10,7 @@ import {
 	Inter_500Medium,
 	useFonts,
 } from "@expo-google-fonts/inter";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ObjectiveCard(props: ObjectiveCardProps) {
 	const lack =
@@ -25,7 +26,7 @@ export default function ObjectiveCard(props: ObjectiveCardProps) {
 	const formattedLack = new Intl.NumberFormat("pt-BR", {
 		style: "currency",
 		currency: "BRL",
-	}).format(props.objectiveData.total - props.availableBalance);
+	}).format(lack);
 
 	let [fontsLoaded] = useFonts({
 		Inter_200ExtraLight,
@@ -47,20 +48,17 @@ export default function ObjectiveCard(props: ObjectiveCardProps) {
 						total: <Text style={styles.value}>{formattedTotal}</Text>
 					</Text>
 
-					<Text style={styles.valueLabel}>
-						falta: <Text style={styles.value}></Text>
-					</Text>
+					{
+						props.finished
+						?
+						<Ionicons name="checkmark" color="green" />
+						:
+						<Text style={styles.valueLabel}>
+						falta: <Text style={styles.value}>{formattedLack}</Text>
+						</Text>
+					}
+					
 				</View>
-
-				<LinearGradient
-					colors={["#818CF8", "#818CF8", "#E2E8F0", "#E2E8F0"]}
-					locations={[0, 0.8, 0.8, 1]}
-					start={{ x: 0, y: 0 }}
-					end={{ x: 1, y: 0 }}
-					style={{ height: 4, borderRadius: 4 }}
-				>
-					<View />
-				</LinearGradient>
 			</TouchableOpacity>
 		);
 	}
