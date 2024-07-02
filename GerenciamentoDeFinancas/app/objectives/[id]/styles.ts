@@ -14,4 +14,21 @@ export const styles = StyleSheet.create({
 	controls: {
 		gap: 4,
 	},
+	objectiveTitle: {
+		fontFamily: "Poppins_600SemiBold",
+		fontSize: 30,
+		lineHeight: 36,
+		color: "#1F2937",
+		marginBottom: 16
+	},
+	objectiveLine: {
+		fontFamily: "Inter_300Light",
+		fontSize: 16,
+		lineHeight: 24,
+		marginBottom: 4,
+		color: "#4B5563"
+	},
+	objectiveStrong: {
+		fontFamily: "Inter_500Medium",
+	}
 });

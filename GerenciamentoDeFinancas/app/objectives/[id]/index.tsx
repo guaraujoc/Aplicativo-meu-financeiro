@@ -73,23 +73,24 @@ export default function Index() {
 				{isSuccess && (
 					<>
 						<View>
-							<Text>{data.title}</Text>
+							<Text style={styles.objectiveTitle}>{data.title}</Text>
 
-							<Text>Total: {data.total}</Text>
-							<Text>Falta: R$ 310.00</Text>
-							<Text>Adicionado em 29/06/2024</Text>
-							<Text>Criado por User 12</Text>
-							<Text>Status: ATIVO</Text>
+							<Text style={styles.objectiveLine}>Total: <Text  style={styles.objectiveStrong}>{data.total}</Text></Text>
+							<Text style={styles.objectiveLine}>Falta: <Text  style={styles.objectiveStrong}>R$ 310.00</Text></Text>
+							<Text style={styles.objectiveLine}>Adicionado em <Text style={styles.objectiveStrong}>29/06/2024</Text></Text>
+							<Text style={styles.objectiveLine}>Criado por <Text style={styles.objectiveStrong}>User 12</Text></Text>
+							<Text style={styles.objectiveLine}>Status: <Text style={styles.objectiveStrong}>ATIVO</Text></Text>
 						</View>
 
 						<View style={styles.controls}>
 							<Button
+								secondary
 								text="Editar"
 								onPress={() => router.navigate(`/objectives/${id}/edit`)}
 								disabled={isDeletePending}
 							/>
 
-							<Button text="Excluir" onPress={onSubmit} />
+							<Button red text="Excluir" onPress={onSubmit} />
 						</View>
 					</>
 				)}

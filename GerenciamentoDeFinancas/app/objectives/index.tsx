@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import Header from "@/components/Header";
 import { router } from "expo-router";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { styles } from "./styles";
 import { OBJECTIVES, TRANSACTION } from "@/api";
 import { useGlobalContext } from "@/store";
@@ -63,7 +63,7 @@ export default function Index() {
 	});
 
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			<Header title="Objetivos" />
 
 			<View style={styles.content}>
@@ -78,13 +78,16 @@ export default function Index() {
 				{isSuccess && data.length > 0 && (
 					<TransactionsContent objectives={data} transactions={transactions} />
 				)}
-
-				<Button
-					text="Novo Objetivo"
-					onPress={() => router.navigate(`/objectives/new`)}
-					icon=""
-				/>
+				
+				<View style={{ marginTop: 52 }}>
+					<Button
+						secondary
+						text="Novo Objetivo"
+						onPress={() => router.navigate(`/objectives/new`)}
+						icon=""
+					/>
+				</View>
 			</View>
-		</View>
+		</ScrollView>
 	);
 }

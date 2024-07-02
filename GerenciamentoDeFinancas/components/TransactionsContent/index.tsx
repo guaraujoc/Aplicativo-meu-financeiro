@@ -1,7 +1,8 @@
 import { Objective } from "@/interfaces/objective";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import ObjectiveCard from "../ObjectiveCard";
 import { Transaction } from "@/interfaces/transaction";
+import { styles } from "./styles";
 
 export default function TransactionsContent({
 	objectives,
@@ -10,7 +11,7 @@ export default function TransactionsContent({
 	objectives: Objective[];
 	transactions: Transaction[];
 }) {
-	const calculateSummary = (transactions: Transaction[]) => {
+	const calculateBalance = (transactions: Transaction[]) => {
 		const availableBalance = transactions
 			.filter((t) => t.type === "Receita")
 			.reduce((sum, t) => sum + t.amount, 0);
@@ -19,26 +20,38 @@ export default function TransactionsContent({
 			.filter((t) => t.type === "Despesa")
 			.reduce((sum, t) => sum + t.amount, 0);
 
-		const nextMonthDebt = transactions
-			.filter((t) => t.isInstallment)
-			.reduce((sum, t) => {
-				if (t.installmentCount) {
-					return sum + t.amount / t.installmentCount;
-				} else {
-					return sum + t.amount;
-				}
-			}, 0);
-
-		return {
-			availableBalance,
-			totalExpenses,
-			nextMonthDebt,
-		};
+		return availableBalance - totalExpenses;
 	};
+
+	let balance = calculateBalance(transactions);
+
+	const finished = [];
+	const remaining = [];
+
+	for (let obj of objectives) {
+        if (balance >= obj.total) {
+            finished.push(obj);
+            balance -= obj.total;
+        } else {
+            remaining.push(obj);
+        }
+    }
 
 	return (
 		<View>
-			{objectives.map((objective: Objective) => (
+			<Text style={styles.secondaryTitle}>Ativos</Text>
+			<View style={styles.objectives}>
+				{remaining.map((objective: Objective) => (
+					<ObjectiveCard
+						key={objective.id}
+						objectiveData={objective}
+						availableBalance={10}
+					/>
+				))}
+			</View>
+			
+			<Text style={styles.secondaryTitle}>Concluídos</Text>
+			{finished.map((objective: Objective) => (
 				<ObjectiveCard
 					key={objective.id}
 					objectiveData={objective}
