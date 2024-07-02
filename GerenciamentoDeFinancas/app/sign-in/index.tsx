@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Icon from "react-native-vector-icons/Ionicons";
 import Button from "@/components/Button";
 import { Input } from "@/components/Input";
 import { FormFields, formValidationSchema } from "./types";

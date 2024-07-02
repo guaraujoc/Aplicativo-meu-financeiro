@@ -12,10 +12,20 @@ import {
 } from "@expo-google-fonts/inter";
 
 export default function ObjectiveCard(props: ObjectiveCardProps) {
+	const lack =
+		props.objectiveData.total - props.availableBalance < 0
+			? props.objectiveData.total
+			: props.objectiveData.total - props.availableBalance;
+
 	const formattedTotal = new Intl.NumberFormat("pt-BR", {
 		style: "currency",
 		currency: "BRL",
 	}).format(props.objectiveData.total);
+
+	const formattedLack = new Intl.NumberFormat("pt-BR", {
+		style: "currency",
+		currency: "BRL",
+	}).format(props.objectiveData.total - props.availableBalance);
 
 	let [fontsLoaded] = useFonts({
 		Inter_200ExtraLight,
