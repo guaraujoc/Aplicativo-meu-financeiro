@@ -18,11 +18,21 @@ import Button from "@/components/Button";
 import { useGlobalContext } from "@/store";
 import { styles } from "./styles";
 
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
+	let timeout: ReturnType<typeof setTimeout>;
+
+	return function (this: any, ...args: Parameters<T>) {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(this, args), delay);
+	} as T;
+}
+
 export default function Index() {
 	const { token, saveToken, user, saveUser } = useGlobalContext();
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] =
 		useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const {
 		register,
@@ -72,12 +82,20 @@ export default function Index() {
 			saveToken(access_token);
 			saveUser(user);
 
-			return router.navigate("/home");
+			router.navigate("/home");
 		},
 	});
 
-	const onSubmit = async ({ passwordConfirmation, ...data }: FormFields) =>
-		await mutateAsync(data);
+	const onSubmit = async ({ passwordConfirmation, ...data }: FormFields) => {
+		if (isSubmitting) return;
+
+		setIsSubmitting(true);
+		try {
+			await mutateAsync(data);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<ScrollView style={styles.container}>
@@ -124,7 +142,11 @@ export default function Index() {
 				/>
 			</View>
 
-			<Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
+			<Button
+				text="Criar conta"
+				onPress={debounce(handleSubmit(onSubmit), 300)}
+				disabled={isSubmitting}
+			/>
 
 			<Text style={styles.loginText}>
 				Já possui uma conta?{" "}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { styles } from "./styles";
@@ -12,8 +12,18 @@ import { useGlobalContext } from "@/store";
 import { MEMBERS } from "@/api";
 import { router } from "expo-router";
 
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
+	let timeout: ReturnType<typeof setTimeout>;
+
+	return function (this: any, ...args: Parameters<T>) {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(this, args), delay);
+	} as T;
+}
+
 export default function Index() {
 	const { token } = useGlobalContext();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const {
 		register,
@@ -49,11 +59,20 @@ export default function Index() {
 	const { mutateAsync, error, isError } = useMutation({
 		mutationFn: postNewMemberData,
 		onSuccess: () => {
-			return router.navigate("/home");
+			router.navigate("/home");
 		},
 	});
 
-	const onSubmit = async (data: FormFields) => await mutateAsync(data.email);
+	const onSubmit = async (data: FormFields) => {
+		if (isSubmitting) return;
+
+		setIsSubmitting(true);
+		try {
+			await mutateAsync(data.email);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -68,7 +87,11 @@ export default function Index() {
 					onChangeText={(text) => setValue("email", text)}
 				/>
 
-				<Button text="Adicionar" onPress={handleSubmit(onSubmit)} />
+				<Button
+					text="Adicionar"
+					onPress={debounce(handleSubmit(onSubmit), 300)}
+					disabled={isSubmitting}
+				/>
 			</View>
 		</SafeAreaView>
 	);
